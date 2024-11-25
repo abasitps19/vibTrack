@@ -13,10 +13,11 @@
 int main(void)
 {
 	system_init();
-	start_advertise();
-	while(1)
+	init_timers();
+	//start_advertise();
+	while (1)
 	{
-		blink_led();
+		handle_advertise();
+		//blink_led();
 	}
-	
 }

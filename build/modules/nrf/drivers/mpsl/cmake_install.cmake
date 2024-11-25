@@ -39,11 +39,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/drivers/mpsl/clock_control/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/drivers/mpsl/clock_control/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/drivers/mpsl/flash_sync/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/drivers/mpsl/flash_sync/cmake_install.cmake")
 endif()
 

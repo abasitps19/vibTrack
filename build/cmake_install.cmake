@@ -1,4 +1,4 @@
-# Install script for directory: E:/project/Innovation/BluetoothMotionDt/track/vibTrack
+# Install script for directory: E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

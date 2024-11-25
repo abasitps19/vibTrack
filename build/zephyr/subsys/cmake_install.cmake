@@ -39,116 +39,116 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/canbus/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/canbus/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/debug/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/debug/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/fb/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fb/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/fs/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fs/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/ipc/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/ipc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/logging/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/logging/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/mem_mgmt/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/mem_mgmt/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/mgmt/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/mgmt/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/modbus/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/modbus/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/pm/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/pm/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/portability/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/portability/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/random/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/random/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/rtio/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/rtio/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/sd/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/sd/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/stats/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/stats/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/storage/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/storage/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/task_wdt/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/task_wdt/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/testsuite/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/testsuite/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/tracing/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/tracing/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/usb/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/usb/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/bluetooth/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/net/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/net/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/zephyr/subsys/settings/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/settings/cmake_install.cmake")
 endif()
 

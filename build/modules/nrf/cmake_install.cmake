@@ -39,36 +39,36 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/ext/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/ext/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/lib/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/lib/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/samples/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/samples/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/subsys/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/subsys/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/modules/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/modules/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/drivers/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/drivers/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/nrf/tests/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/nrf/tests/cmake_install.cmake")
 endif()
 

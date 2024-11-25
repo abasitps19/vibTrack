@@ -1,5 +1,5 @@
 @echo off
-cd /D E:\project\Innovation\BluetoothMotionDt\track\vibTrack\build || (set FAIL_LINE=2& goto :ABORT)
+cd /D E:\project\Innovation\BluetoothMotionDt\BLE\Applications\vibTrack\build || (set FAIL_LINE=2& goto :ABORT)
 C:\ncs\toolchains\ce3b5ff664\opt\bin\cmake.exe -E echo adafruit_2_8_tft_touch_v2 || (set FAIL_LINE=3& goto :ABORT)
 C:\ncs\toolchains\ce3b5ff664\opt\bin\cmake.exe -E echo adafruit_2_8_tft_touch_v2_nano || (set FAIL_LINE=4& goto :ABORT)
 C:\ncs\toolchains\ce3b5ff664\opt\bin\cmake.exe -E echo adafruit_can_picowbell || (set FAIL_LINE=5& goto :ABORT)

@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/track/vibTrack/build/modules/cmsis/cmsis/CMSIS/cmake_install.cmake")
+  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/modules/cmsis/cmsis/CMSIS/cmake_install.cmake")
 endif()
 

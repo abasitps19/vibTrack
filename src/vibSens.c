@@ -23,7 +23,7 @@
 
 #include "..\inc\vibSens.h"
 
-#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME "Nordic_Status" // CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define RUN_STATUS_LED DK_LED1
@@ -37,10 +37,19 @@
 BT_NSMS_DEF(nsms_btn1, "Button 1", false, "Unknown", 20);
 BT_NSMS_DEF(nsms_btn2, "Button 2", IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED), "Unknown", 20);
 
+void cb_timer_app_1sec(struct k_timer *timer_id);
+void cb_timer_app_100ms(struct k_timer *timer_id);
+void cb_timer_app_100ms_stop(struct k_timer *timer_id);
+
+K_TIMER_DEFINE(timer_1sec, cb_timer_app_1sec, NULL);
+K_TIMER_DEFINE(timer_100ms, cb_timer_app_100ms, cb_timer_app_100ms_stop);
+
+uint8_t led_status = 0;
+
 static uint8_t txPower = 4;
 static uint8_t sensor_data[] = {
     0x4c, 0x00,                         // Apple
-    0x02, 0x15,                         // iBeacon
+    0x01, 0x15,                         // iBeacon
     0x18, 0xee, 0x15, 0x16,             // UUID[15..12]
     0x01, 0x6b,                         // UUID[11..10]
     0x4b, 0xec,                         // UUID[9..8]
@@ -254,11 +263,10 @@ int start_advertise(void)
     uint8_t tx_power = 0;
     set_tx_power(txPower);
     tx_power = get_tx_power();
-    sensor_data[sizeof(sensor_data) - 1] = (uint8_t)tx_power;
+    // sensor_data[sizeof(sensor_data) - 1] = (uint8_t)tx_power;
 
-    err = bt_le_adv_start(BT_LE_ADV_NCONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
-
-    // err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+    // err = bt_le_adv_start(BT_LE_ADV_NCONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
+    err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
     if (err)
     {
         printk("Advertising failed to start (err %d)\n", err);
@@ -269,9 +277,60 @@ int start_advertise(void)
     return err;
 }
 
+int stop_advertise(void)
+{
+    int err = bt_le_adv_stop();
+    return err;
+}
+static uint8_t advertise_state = 0;
+
+void handle_advertise()
+{
+    if (advertise_state == 1)
+    {
+        start_advertise();
+        dk_set_led(RUN_STATUS_LED, 1);
+        advertise_state = 3;
+    }
+    else if (advertise_state == 2)
+    {
+        stop_advertise();
+        dk_set_led(RUN_STATUS_LED, 0);
+        advertise_state = 3;
+    }
+    else
+    {
+    }
+};
+
+void cb_timer_app_1sec(struct k_timer *timer_id)
+{
+    // turn on led
+    // dk_set_led(RUN_STATUS_LED, 1);
+    advertise_state = 1;
+    k_timer_start(&timer_100ms, K_MSEC(200), K_NO_WAIT);
+    // start advertise
+}
+
+void cb_timer_app_100ms(struct k_timer *timer_id)
+{
+    // turn off led
+    // stop_advertise();
+    advertise_state = 2;
+    // dk_set_led(RUN_STATUS_LED, 0);
+}
+void cb_timer_app_100ms_stop(struct k_timer *timer_id)
+{
+}
+
+void init_timers(void)
+{
+    k_timer_start(&timer_1sec, K_SECONDS(1), K_SECONDS(1));
+}
+
 void blink_led(void)
 {
     static int blink_status = 0;
     dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
-    k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+    // k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 }
