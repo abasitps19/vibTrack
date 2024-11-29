@@ -23,12 +23,15 @@
 
 #include "..\inc\vibSens.h"
 
-#define DEVICE_NAME "Nordic_Status" // CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME "Sensor Status" // CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define RUN_STATUS_LED DK_LED1
 #define CON_STATUS_LED DK_LED2
 #define RUN_LED_BLINK_INTERVAL 1000
+
+#define ADVERTISE_DELAY_TIME 2
+#define ADVERTISE_DURATION 200
 
 #define STATUS1_BUTTON DK_BTN1_MSK
 #define STATUS2_BUTTON DK_BTN2_MSK
@@ -273,7 +276,7 @@ int start_advertise(void)
         return 0;
     }
 
-    printk("Advertising successfully started\n");
+    printk("Advertising \n");
     return err;
 }
 
@@ -308,7 +311,7 @@ void cb_timer_app_1sec(struct k_timer *timer_id)
     // turn on led
     // dk_set_led(RUN_STATUS_LED, 1);
     advertise_state = 1;
-    k_timer_start(&timer_100ms, K_MSEC(200), K_NO_WAIT);
+    k_timer_start(&timer_100ms, K_MSEC(ADVERTISE_DURATION), K_NO_WAIT);
     // start advertise
 }
 
@@ -325,7 +328,7 @@ void cb_timer_app_100ms_stop(struct k_timer *timer_id)
 
 void init_timers(void)
 {
-    k_timer_start(&timer_1sec, K_SECONDS(1), K_SECONDS(1));
+    k_timer_start(&timer_1sec, K_SECONDS(ADVERTISE_DELAY_TIME), K_SECONDS(ADVERTISE_DELAY_TIME));
 }
 
 void blink_led(void)
