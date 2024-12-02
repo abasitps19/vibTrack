@@ -40,6 +40,9 @@
 BT_NSMS_DEF(nsms_btn1, "Button 1", false, "Unknown", 20);
 BT_NSMS_DEF(nsms_btn2, "Button 2", IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED), "Unknown", 20);
 
+int radio_init(void);
+int board_init(void);
+
 void cb_timer_app_1sec(struct k_timer *timer_id);
 void cb_timer_app_100ms(struct k_timer *timer_id);
 void cb_timer_app_100ms_stop(struct k_timer *timer_id);
@@ -50,9 +53,10 @@ K_TIMER_DEFINE(timer_100ms, cb_timer_app_100ms, cb_timer_app_100ms_stop);
 uint8_t led_status = 0;
 
 static uint8_t txPower = 4;
-static uint8_t sensor_data[] = {
-    0x4c, 0x00,                         // Apple
-    0x01, 0x15,                         // iBeacon
+
+uint8_t sensor_data[] = {
+    0x59, 0x00,
+    0x08, 0x14,
     0x18, 0xee, 0x15, 0x16,             // UUID[15..12]
     0x01, 0x6b,                         // UUID[11..10]
     0x4b, 0xec,                         // UUID[9..8]
@@ -60,18 +64,19 @@ static uint8_t sensor_data[] = {
     0xbc, 0xb9, 0x6d, 0x16, 0x6e, 0x97, // UUID[5..0]
     0x00, 0x05,                         // Major
     0x00, 0x0a,                         // Minor
-    0x00                                // IBEACON_RSSI (placeholder)
+    0x02                                // IBEACON_RSSI (placeholder)
 };
+
 static const struct bt_data sensor[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
     BT_DATA(BT_DATA_MANUFACTURER_DATA, sensor_data, sizeof(sensor_data)),
 };
 
+
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
-
 static const struct bt_data sd[] = {
     BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NSMS_VAL),
 };
@@ -85,102 +90,28 @@ int8_t get_tx_power(void)
 {
     return (NRF_RADIO->TXPOWER & RADIO_TXPOWER_TXPOWER_Msk) >> RADIO_TXPOWER_TXPOWER_Pos;
 }
-
-static void connected(struct bt_conn *conn, uint8_t err)
+void get_public_mac_address(void)
 {
+    struct net_buf *rsp;
+    struct bt_hci_rp_read_bd_addr *rp;
+    int err;
+    
+    // Send HCI command to read the BD_ADDR (public address)
+    err = bt_hci_cmd_send_sync(BT_HCI_OP_READ_BD_ADDR, NULL, &rsp);
     if (err)
     {
-        printk("Connection failed (err %u)\n", err);
+        printk("Failed to get public address (err %d)\n", err);
         return;
     }
-    printk("Connected\n");
-    dk_set_led_on(CON_STATUS_LED);
+
+    rp = (struct bt_hci_rp_read_bd_addr *)rsp->data;
+
+    printk("Public MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+           rp->bdaddr.val[5], rp->bdaddr.val[4], rp->bdaddr.val[3],
+           rp->bdaddr.val[2], rp->bdaddr.val[1], rp->bdaddr.val[0]);
+
+    net_buf_unref(rsp);
 }
-
-static void disconnected(struct bt_conn *conn, uint8_t reason)
-{
-    printk("Disconnected (reason %u)\n", reason);
-
-    dk_set_led_off(CON_STATUS_LED);
-}
-
-#if IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED)
-static void security_changed(struct bt_conn *conn, bt_security_t level,
-                             enum bt_security_err err)
-{
-    char addr[BT_ADDR_LE_STR_LEN];
-
-    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-    if (!err)
-    {
-        printk("Security changed: %s level %u\n", addr, level);
-    }
-    else
-    {
-        printk("Security failed: %s level %u err %d\n", addr, level,
-               err);
-    }
-}
-#endif
-
-BT_CONN_CB_DEFINE(conn_callbacks) = {
-    .connected = connected,
-    .disconnected = disconnected,
-#if IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED)
-    .security_changed = security_changed,
-#endif
-};
-
-#if IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED)
-static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
-{
-    char addr[BT_ADDR_LE_STR_LEN];
-
-    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-    printk("Passkey for %s: %06u\n", addr, passkey);
-}
-
-static void auth_cancel(struct bt_conn *conn)
-{
-    char addr[BT_ADDR_LE_STR_LEN];
-
-    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-    printk("Pairing cancelled: %s\n", addr);
-}
-
-static void pairing_complete(struct bt_conn *conn, bool bonded)
-{
-    char addr[BT_ADDR_LE_STR_LEN];
-
-    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-    printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
-}
-
-static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
-{
-    char addr[BT_ADDR_LE_STR_LEN];
-
-    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-    printk("Pairing failed conn: %s, reason %d\n", addr, reason);
-}
-
-static struct bt_conn_auth_cb conn_auth_callbacks = {
-    .passkey_display = auth_passkey_display,
-    .cancel = auth_cancel,
-};
-
-static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
-    .pairing_complete = pairing_complete,
-    .pairing_failed = pairing_failed};
-#else
-static struct bt_conn_auth_cb conn_auth_callbacks;
-static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
-#endif /* IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED) */
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
@@ -199,22 +130,26 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 static int init_button(void)
 {
     int err;
-
     err = dk_buttons_init(button_changed);
     if (err)
     {
         printk("Cannot init buttons (err: %d)\n", err);
     }
-
     return err;
 }
 
 int system_init(void)
 {
     int err;
+    err= board_init();
+    err = radio_init();
+    return err;
+}
 
-    printk("Starting Bluetooth Peripheral Status example\n");
-
+int board_init(void)
+{
+    int err;
+    printk("sensor init\n");
     err = dk_leds_init();
     if (err)
     {
@@ -228,28 +163,20 @@ int system_init(void)
         printk("Button init failed (err %d)\n", err);
         return 0;
     }
-    if (IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED))
-    {
-        err = bt_conn_auth_cb_register(&conn_auth_callbacks);
-        if (err)
-        {
-            printk("Failed to register authorization callbacks.\n");
-            return 0;
-        }
-
-        err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
-        if (err)
-        {
-            printk("Failed to register authorization info callbacks.\n");
-            return 0;
-        }
-    }
+    return err;
+}
+int radio_init(void)
+{
+    int err;
     err = bt_enable(NULL);
     if (err)
     {
         printk("Bluetooth init failed (err %d)\n", err);
         return 0;
     }
+    bt_ctlr_set_public_addr();
+
+    //bt_ctlr_set_static_addr();
 
     printk("Bluetooth initialized\n");
 
@@ -257,7 +184,8 @@ int system_init(void)
     {
         settings_load();
     }
-    return err;
+    get_public_mac_address();
+
 }
 
 int start_advertise(void)
@@ -268,15 +196,14 @@ int start_advertise(void)
     tx_power = get_tx_power();
     // sensor_data[sizeof(sensor_data) - 1] = (uint8_t)tx_power;
 
-    // err = bt_le_adv_start(BT_LE_ADV_NCONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
-    err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+    //err = bt_le_adv_start(BT_LE_ADV_NCONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
+     err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+    // auth_passkey_display();
     if (err)
     {
         printk("Advertising failed to start (err %d)\n", err);
         return 0;
     }
-
-    printk("Advertising \n");
     return err;
 }
 
@@ -292,12 +219,14 @@ void handle_advertise()
     if (advertise_state == 1)
     {
         start_advertise();
+        printk("start advertising \n");
         dk_set_led(RUN_STATUS_LED, 1);
         advertise_state = 3;
     }
     else if (advertise_state == 2)
     {
         stop_advertise();
+        printk("stop advertising \n");
         dk_set_led(RUN_STATUS_LED, 0);
         advertise_state = 3;
     }
