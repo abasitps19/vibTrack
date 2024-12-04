@@ -23,7 +23,7 @@
 
 #include "..\inc\vibSens.h"
 
-#define DEVICE_NAME "Sensor Status" // CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define RUN_STATUS_LED DK_LED1
@@ -32,6 +32,7 @@
 
 #define ADVERTISE_DELAY_TIME 2
 #define ADVERTISE_DURATION 200
+#define MAX_ADVERTISE_PACKET 250
 
 #define STATUS1_BUTTON DK_BTN1_MSK
 #define STATUS2_BUTTON DK_BTN2_MSK
@@ -51,28 +52,21 @@ K_TIMER_DEFINE(timer_1sec, cb_timer_app_1sec, NULL);
 K_TIMER_DEFINE(timer_100ms, cb_timer_app_100ms, cb_timer_app_100ms_stop);
 
 uint8_t led_status = 0;
+uint8_t adv_packet_no = 0;
 
 static uint8_t txPower = 4;
 
 uint8_t sensor_data[] = {
     0x59, 0x00,
     0x08, 0x14,
-    0x18, 0xee, 0x15, 0x16,             // UUID[15..12]
-    0x01, 0x6b,                         // UUID[11..10]
-    0x4b, 0xec,                         // UUID[9..8]
-    0xad, 0x96,                         // UUID[7..6]
-    0xbc, 0xb9, 0x6d, 0x16, 0x6e, 0x97, // UUID[5..0]
-    0x00, 0x05,                         // Major
-    0x00, 0x0a,                         // Minor
-    0x02                                // IBEACON_RSSI (placeholder)
-};
+    0x1A, 0xCC, 0x1B, 0x16, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,
+    0x00, 0x00, 0x00, 0x00, 0x00};
 
 static const struct bt_data sensor[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
     BT_DATA(BT_DATA_MANUFACTURER_DATA, sensor_data, sizeof(sensor_data)),
 };
-
-
+/*
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
@@ -80,6 +74,7 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
     BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NSMS_VAL),
 };
+*/
 
 void set_tx_power(int8_t tx_power)
 {
@@ -95,7 +90,7 @@ void get_public_mac_address(void)
     struct net_buf *rsp;
     struct bt_hci_rp_read_bd_addr *rp;
     int err;
-    
+
     // Send HCI command to read the BD_ADDR (public address)
     err = bt_hci_cmd_send_sync(BT_HCI_OP_READ_BD_ADDR, NULL, &rsp);
     if (err)
@@ -141,7 +136,7 @@ static int init_button(void)
 int system_init(void)
 {
     int err;
-    err= board_init();
+    err = board_init();
     err = radio_init();
     return err;
 }
@@ -174,9 +169,9 @@ int radio_init(void)
         printk("Bluetooth init failed (err %d)\n", err);
         return 0;
     }
-    bt_ctlr_set_public_addr();
+    // bt_ctlr_set_public_addr();
 
-    //bt_ctlr_set_static_addr();
+    // bt_ctlr_set_static_addr();
 
     printk("Bluetooth initialized\n");
 
@@ -185,7 +180,6 @@ int radio_init(void)
         settings_load();
     }
     get_public_mac_address();
-
 }
 
 int start_advertise(void)
@@ -194,11 +188,20 @@ int start_advertise(void)
     uint8_t tx_power = 0;
     set_tx_power(txPower);
     tx_power = get_tx_power();
-    // sensor_data[sizeof(sensor_data) - 1] = (uint8_t)tx_power;
+    sensor_data[sizeof(sensor_data) - 1] = adv_packet_no;
+    if (adv_packet_no < MAX_ADVERTISE_PACKET)
+    {
+        ++adv_packet_no;
+    }
+    else
+    {
+        adv_packet_no = 1;
+    }
 
-    //err = bt_le_adv_start(BT_LE_ADV_NCONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
-     err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-    // auth_passkey_display();
+    err = bt_le_adv_start(BT_LE_ADV_CONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
+
+    // err = bt_le_adv_start(BT_LE_ADV_NCONN /*BT_LE_ADV_CONN*/, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
     if (err)
     {
         printk("Advertising failed to start (err %d)\n", err);

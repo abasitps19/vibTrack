@@ -147,8 +147,3 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/net/cmake_install.cmake")
 endif()
 
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/settings/cmake_install.cmake")
-endif()
-

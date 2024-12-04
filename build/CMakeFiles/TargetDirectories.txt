@@ -105,8 +105,6 @@ E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/s
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fb/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fs/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fs/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fs/nvs/CMakeFiles/edit_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/fs/nvs/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/ipc/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/ipc/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/logging/CMakeFiles/edit_cache.dir
@@ -132,8 +130,6 @@ E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/s
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/stats/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/storage/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/storage/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/storage/flash_map/CMakeFiles/edit_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/storage/flash_map/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/task_wdt/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/task_wdt/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/testsuite/CMakeFiles/edit_cache.dir
@@ -152,9 +148,6 @@ E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/s
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/host/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/services/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/services/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/crypto/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/crypto/CMakeFiles/subsys__bluetooth__crypto.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/crypto/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/controller/CMakeFiles/subsys__bluetooth__controller.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/controller/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/bluetooth/controller/CMakeFiles/rebuild_cache.dir
@@ -170,10 +163,6 @@ E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/s
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/net/lib/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/net/lib/utils/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/net/lib/utils/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/settings/CMakeFiles/edit_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/settings/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/settings/src/CMakeFiles/edit_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/subsys/settings/src/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/disk/CMakeFiles/edit_cache.dir
@@ -202,9 +191,6 @@ E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/d
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/entropy/CMakeFiles/drivers__entropy.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/entropy/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/entropy/CMakeFiles/rebuild_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/flash/CMakeFiles/edit_cache.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/flash/CMakeFiles/drivers__flash.dir
-E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/flash/CMakeFiles/rebuild_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/gpio/CMakeFiles/drivers__gpio.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/gpio/CMakeFiles/edit_cache.dir
 E:/project/Innovation/BluetoothMotionDt/BLE/Applications/vibTrack/build/zephyr/drivers/gpio/CMakeFiles/rebuild_cache.dir
