@@ -1,4 +1,3 @@
-
 #ifndef _VIB_SENSOR_H
 #define _VIB_SENSOR_H
 

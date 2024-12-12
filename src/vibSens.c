@@ -1,34 +1,34 @@
 
-#include <zephyr/types.h>
-#include <stddef.h>
-#include <string.h>
-#include <errno.h>
-#include <zephyr/sys/printk.h>
-#include <zephyr/sys/byteorder.h>
-#include <zephyr/kernel.h>
-#include <zephyr/drivers/gpio.h>
-#include <soc.h>
+#include "../inc/vibsens.h"
 
 #include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/bluetooth/hci.h>
+#include <bluetooth/gatt_dm.h>
+#include <bluetooth/scan.h>
 
-#include <bluetooth/services/nsms.h>
-
-#include <zephyr/settings/settings.h>
+#include <zephyr/bluetooth/services/bas.h>
+#include <zephyr/bluetooth/services/hrs.h>
+#include <bluetooth/services/hrs_client.h>
 
 #include <dk_buttons_and_leds.h>
 
-#include "..\inc\vibSens.h"
+#include <zephyr/settings/settings.h>
 
-#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
-#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
+#include <zephyr/kernel.h>
+
+#define STACKSIZE 1024
+#define PRIORITY 7
 
 #define RUN_STATUS_LED DK_LED1
-#define CON_STATUS_LED DK_LED2
+#define CENTRAL_CON_STATUS_LED DK_LED2
+#define PERIPHERAL_CONN_STATUS_LED DK_LED3
+
 #define RUN_LED_BLINK_INTERVAL 1000
+
+#define HRS_QUEUE_SIZE 16
 
 #define ADVERTISE_DELAY_TIME 2
 #define ADVERTISE_DURATION 200
@@ -36,10 +36,6 @@
 
 #define STATUS1_BUTTON DK_BTN1_MSK
 #define STATUS2_BUTTON DK_BTN2_MSK
-
-/* Implementation of two status characteristics */
-BT_NSMS_DEF(nsms_btn1, "Button 1", false, "Unknown", 20);
-BT_NSMS_DEF(nsms_btn2, "Button 2", IS_ENABLED(CONFIG_BT_STATUS_SECURITY_ENABLED), "Unknown", 20);
 
 int radio_init(void);
 int board_init(void);
@@ -110,7 +106,7 @@ void get_public_mac_address(void)
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-    if (has_changed & STATUS1_BUTTON)
+   /* if (has_changed & STATUS1_BUTTON)
     {
         bt_nsms_set_status(&nsms_btn1,
                            (button_state & STATUS1_BUTTON) ? "Pressed" : "Released");
@@ -120,6 +116,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
         bt_nsms_set_status(&nsms_btn2,
                            (button_state & STATUS2_BUTTON) ? "Pressed" : "Released");
     }
+    */
 }
 
 static int init_button(void)
@@ -180,6 +177,8 @@ int radio_init(void)
         settings_load();
     }
     get_public_mac_address();
+
+    return 0;
 }
 
 int start_advertise(void)

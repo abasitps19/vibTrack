@@ -1,4 +1,0 @@
-osource "e:/project/ble_boards/boards/shields/*/Kconfig.defconfig"
-osource "e:/project/innovation/bluetoothmotiondt/ble/applications/vibtrack/boards/shields/*/Kconfig.defconfig"
-osource "c:/my_boards/boards/shields/*/Kconfig.defconfig"
-osource "C:/ncs/v2.7.0/nrf/boards/shields/*/Kconfig.defconfig"
