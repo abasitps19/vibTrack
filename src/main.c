@@ -8,6 +8,6 @@ int main(void)
 	while (1)
 	{
 		handle_advertise();
-		// blink_led();
+		blink_led();
 	}
 }
