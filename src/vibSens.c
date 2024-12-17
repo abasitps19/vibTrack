@@ -42,7 +42,7 @@
 #define HRS_QUEUE_SIZE 16
 
 #define ADVERTISE_DELAY_TIME 2
-#define ADVERTISE_DURATION 200
+#define ADVERTISE_DURATION 400
 #define MAX_ADVERTISE_PACKET 250
 
 #define STATUS1_BUTTON DK_BTN1_MSK
@@ -93,12 +93,12 @@ static const struct bt_data sd[] = {
 
 void set_tx_power(int8_t tx_power)
 {
-    NRF_RADIO->TXPOWER = (tx_power << RADIO_TXPOWER_TXPOWER_Pos) & RADIO_TXPOWER_TXPOWER_Msk;
+   // NRF_RADIO->TXPOWER = (tx_power << RADIO_TXPOWER_TXPOWER_Pos) & RADIO_TXPOWER_TXPOWER_Msk;
 }
 
 int8_t get_tx_power(void)
 {
-    return (NRF_RADIO->TXPOWER & RADIO_TXPOWER_TXPOWER_Msk) >> RADIO_TXPOWER_TXPOWER_Pos;
+   // return (NRF_RADIO->TXPOWER & RADIO_TXPOWER_TXPOWER_Msk) >> RADIO_TXPOWER_TXPOWER_Pos;
 }
 void get_public_mac_address(void)
 {
@@ -275,16 +275,16 @@ void handle_advertise()
     {
         start_advertise();
         printk("start advertising \n");
-        // dk_set_led(RUN_STATUS_LED, 0);
-        gpio_pin_set(gpio_dev, STATUS_LED, 1);
+        dk_set_led(RUN_STATUS_LED, 0);
+        gpio_pin_set(gpio_dev, STATUS_LED, 0);
         advertise_state = 3;
     }
     else if (advertise_state == 2)
     {
         stop_advertise();
         printk("stop advertising \n");
-        // dk_set_led(RUN_STATUS_LED, 1);
-        gpio_pin_set(gpio_dev, STATUS_LED, 0);
+        dk_set_led(RUN_STATUS_LED, 1);
+        gpio_pin_set(gpio_dev, STATUS_LED, 1);
         advertise_state = 3;
     }
     else

@@ -1,0 +1,5 @@
+board:
+  name: iot_i833_tbb
+  vendor: iot
+  socs:
+   - name: nrf52833

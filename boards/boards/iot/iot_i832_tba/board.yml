@@ -1,0 +1,5 @@
+board:
+  name: iot_i832_tba
+  vendor: iot
+  socs:
+  - name: nrf52832
