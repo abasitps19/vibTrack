@@ -28,6 +28,10 @@
 
 #include <zephyr/kernel.h>
 
+// #include <sys/byteorder.h>
+#include <stdio.h>
+// #include <bluetooth/hci_vs.h>
+
 // #include <nrfx_gpio.h>
 
 #define STACKSIZE 1024
@@ -42,17 +46,25 @@
 // #define HRS_QUEUE_SIZE 16
 
 #define ADVERTISE_DELAY_TIME 2
-#define ADVERTISE_DURATION 500
+#define ADVERTISE_DURATION 1000
 #define MAX_ADVERTISE_PACKET 250
 
 #define STATUS1_BUTTON DK_BTN1_MSK
 #define STATUS2_BUTTON DK_BTN2_MSK
 
 // GPIO defination
+#define ENABLE 1
+#define DISABLE 0
 
 #define CTX_PIN 17
 #define CRX_PIN 19
 #define CPS_PIN 6
+
+#define STATUS_LED_BT832X 20
+#define STATUS_LED_E73_833 29
+
+#define STATUS_LED STATUS_LED_BT832X
+#define GPIO_PORT DT_NODELABEL(gpio0) // Use GPIO0 (check your devicetree)
 
 int radio_init(void);
 int board_init(void);
@@ -69,8 +81,8 @@ uint8_t adv_packet_no = 0;
 
 const struct device *gpio_dev;
 
-#define MAX_TX_POWER_NRF52832 4
-#define MAX_TX_POWER_NRF52833 8
+#define MAX_TX_POWER_NRF52832 0
+#define MAX_TX_POWER_NRF52833 0
 
 // static uint8_t txPower = 8;
 
@@ -94,10 +106,11 @@ static const struct bt_data sd[] = {
 };
 */
 
-void set_tx_power(int8_t tx_power)
+/*void set_tx_power(int8_t tx_power)
 {
     NRF_RADIO->TXPOWER = (tx_power << RADIO_TXPOWER_TXPOWER_Pos) & RADIO_TXPOWER_TXPOWER_Msk;
 }
+*/
 
 int8_t get_tx_power(void)
 {
@@ -131,9 +144,7 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
 }
 
-#define STATUS_LED 29                 // 20                 // GPIO pin number
-#define GPIO_PORT DT_NODELABEL(gpio0) // Use GPIO0 (check your devicetree)
-static int int_gpio(void)
+static int int_power_amplifire(uint8_t status)
 {
     int err = 0;
 
@@ -143,16 +154,25 @@ static int int_gpio(void)
         printk("GPIO device not ready\n");
         return 1;
     }
-    // gpio_pin_configure(gpio_dev, STATUS_LED, GPIO_OUTPUT_ACTIVE);
-    // gpio_pin_configure(gpio_dev, CTX_PIN, GPIO_OUTPUT_ACTIVE);
-    // gpio_pin_configure(gpio_dev, CRX_PIN, GPIO_OUTPUT_ACTIVE);
-    // gpio_pin_configure(gpio_dev, CPS_PIN, GPIO_OUTPUT_ACTIVE);
 
-    // gpio_pin_set(gpio_dev, STATUS_LED, 1); // Set status led pin low
-    //  set sky66112 power mode transmit high power
-    // gpio_pin_set(gpio_dev, CPS_PIN, 0); // CPS = 0  CPS_PIN = 6
-    // gpio_pin_set(gpio_dev, CTX_PIN, 1); // CTX = 1  CTX_PIN = 17
-    // gpio_pin_set(gpio_dev, CRX_PIN, 0); // CRX = X  CRX_PIN = 19
+    gpio_pin_configure(gpio_dev, CTX_PIN, GPIO_OUTPUT_ACTIVE);
+    gpio_pin_configure(gpio_dev, CRX_PIN, GPIO_OUTPUT_ACTIVE);
+    gpio_pin_configure(gpio_dev, CPS_PIN, GPIO_OUTPUT_ACTIVE);
+
+    if (status == ENABLE)
+    {
+        // set sky66112 power mode transmit high power
+        gpio_pin_set(gpio_dev, CPS_PIN, 0); // CPS = 0  CPS_PIN = 6
+        gpio_pin_set(gpio_dev, CTX_PIN, 1); // CTX = 1  CTX_PIN = 17
+        gpio_pin_set(gpio_dev, CRX_PIN, 0); // CRX = X  CRX_PIN = 19
+    }
+    else if (status == DISABLE)
+    {
+        // set sky66112 power mode transmit low power
+        gpio_pin_set(gpio_dev, CPS_PIN, 0); // CPS = 1  CPS_PIN = 6
+        gpio_pin_set(gpio_dev, CTX_PIN, 0); // CTX = 0  CTX_PIN = 17
+        gpio_pin_set(gpio_dev, CRX_PIN, 0); // CRX = X  CRX_PIN = 19
+    }
 
     return err;
 }
@@ -171,9 +191,9 @@ static int init_button(void)
 int system_init(void)
 {
     int err;
-    int_gpio();
     err = board_init();
     err = radio_init();
+    // int_power_amplifire(ENABLE);
     return err;
 }
 
@@ -215,8 +235,7 @@ int radio_init(void)
     {
         settings_load();
     }
-    get_public_mac_address();
-
+    // get_public_mac_address();
     return 0;
 }
 
@@ -224,13 +243,11 @@ int start_advertise(void)
 {
     int err = 0;
     uint8_t tx_power = 0;
-    set_tx_power(MAX_TX_POWER_NRF52832);
+    // set_tx_power(4);
     tx_power = get_tx_power();
+    set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, 8);
     sensor_data[sizeof(sensor_data) - 1] = tx_power;
     sensor_data[sizeof(sensor_data) - 2] = adv_packet_no;
-
-    // sensor_data[sizeof(sensor_data) - 4] = adv_packet_no;
-
     if (adv_packet_no < MAX_ADVERTISE_PACKET)
     {
         ++adv_packet_no;
@@ -266,7 +283,6 @@ void handle_advertise()
         start_advertise();
         printk("start advertising \n");
         dk_set_led(RUN_STATUS_LED, 0);
-        //   gpio_pin_set(gpio_dev, STATUS_LED, 1);
         advertise_state = 3;
     }
     else if (advertise_state == 2)
@@ -274,7 +290,6 @@ void handle_advertise()
         stop_advertise();
         printk("stop advertising \n");
         dk_set_led(RUN_STATUS_LED, 1);
-        //   gpio_pin_set(gpio_dev, STATUS_LED, 0);
         advertise_state = 3;
     }
     else
@@ -310,8 +325,8 @@ void blink_led(void)
 {
     // static int blink_status = 0;
     // dk_set_led(RUN_STATUS_LED, 0 /*(++blink_status) % 2*/);
-    dk_set_led(STATUS_LED1, 0);
-    dk_set_led(STATUS_LED2, 1);
+    // dk_set_led(STATUS_LED1, 0);
+    // dk_set_led(STATUS_LED2, 1);
     // k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
     //   gpio_pin_set(gpio_dev, PIN_NUMBER, 1); // Set pin high
     //    k_msleep(500);                         // Delay
