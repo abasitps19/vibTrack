@@ -9,6 +9,6 @@ project(vibTrack)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-  src/main.c src/vibsens.c
+  src/main.c src/vibsens.c src/ble.c src/app_config.c
 )
 # NORDIC SDK APP END
