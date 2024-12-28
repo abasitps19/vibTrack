@@ -1,5 +1,6 @@
-#include "../inc/vibSens.h"
+//#include "../inc/vibSens.h"
 
+#include "../inc/SystemStateMachine/SystemInit.h"
 int main(void)
 {
 	system_init();

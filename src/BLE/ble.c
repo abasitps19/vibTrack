@@ -1,75 +1,81 @@
-#include "../inc/app_config.h"
-#include "../inc/ble.h"
+
+#include "../../inc/Configurations/Configurations.h"
+
+#include "../../inc/BLE/ble.h"
+// #include "../inc/app_config.h"
+
+// #include "../inc/ble.h"
 
 #define MAX_ADVERTISE_PACKET 250
-static struct bt_conn *default_conn;
-static uint16_t default_conn_handle;
-
+// static struct bt_conn *default_conn;
+// static uint16_t default_conn_handle;
 
 static void set_tx_power(uint8_t handle_type, uint16_t handle, int8_t tx_pwr_lvl)
 {
-	struct bt_hci_cp_vs_write_tx_power_level *cp;
-	struct bt_hci_rp_vs_write_tx_power_level *rp;
-	struct net_buf *buf, *rsp = NULL;
-	int err;
+    struct bt_hci_cp_vs_write_tx_power_level *cp;
+    struct bt_hci_rp_vs_write_tx_power_level *rp;
+    struct net_buf *buf, *rsp = NULL;
+    int err;
 
-	buf = bt_hci_cmd_create(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,sizeof(*cp));
-	if (!buf) {
-		printk("Unable to allocae command buffer\n");
-		return;
-	}
+    buf = bt_hci_cmd_create(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL, sizeof(*cp));
+    if (!buf)
+    {
+        printk("Unable to allocae command buffer\n");
+        return;
+    }
 
-	cp = net_buf_add(buf, sizeof(*cp));
-	cp->handle = sys_cpu_to_le16(handle);
-	cp->handle_type = handle_type;
-	cp->tx_power_level = tx_pwr_lvl;
+    cp = net_buf_add(buf, sizeof(*cp));
+    cp->handle = sys_cpu_to_le16(handle);
+    cp->handle_type = handle_type;
+    cp->tx_power_level = tx_pwr_lvl;
 
-	err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,
-				   buf, &rsp);
-	if (err) {
-		printk("Set Tx power err: %d\n", err);
-		return;
-	}
+    err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_WRITE_TX_POWER_LEVEL,
+                               buf, &rsp);
+    if (err)
+    {
+        printk("Set Tx power err: %d\n", err);
+        return;
+    }
 
-	rp = (void *)rsp->data;
-	printk("Actual Tx Power: %d\n", rp->selected_tx_power);
+    rp = (void *)rsp->data;
+    printk("Actual Tx Power: %d\n", rp->selected_tx_power);
 
-	net_buf_unref(rsp);
+    net_buf_unref(rsp);
 }
 
 static void get_tx_power(uint8_t handle_type, uint16_t handle, int8_t *tx_pwr_lvl)
 {
-	struct bt_hci_cp_vs_read_tx_power_level *cp;
-	struct bt_hci_rp_vs_read_tx_power_level *rp;
-	struct net_buf *buf, *rsp = NULL;
-	int err;
+    struct bt_hci_cp_vs_read_tx_power_level *cp;
+    struct bt_hci_rp_vs_read_tx_power_level *rp;
+    struct net_buf *buf, *rsp = NULL;
+    int err;
 
-	*tx_pwr_lvl = 0xFF;
-	buf = bt_hci_cmd_create(BT_HCI_OP_VS_READ_TX_POWER_LEVEL,
-				sizeof(*cp));
-	if (!buf) {
-		printk("Unable to allocate command buffer\n");
-		return;
-	}
+    *tx_pwr_lvl = 0xFF;
+    buf = bt_hci_cmd_create(BT_HCI_OP_VS_READ_TX_POWER_LEVEL,
+                            sizeof(*cp));
+    if (!buf)
+    {
+        printk("Unable to allocate command buffer\n");
+        return;
+    }
 
-	cp = net_buf_add(buf, sizeof(*cp));
-	cp->handle = sys_cpu_to_le16(handle);
-	cp->handle_type = handle_type;
+    cp = net_buf_add(buf, sizeof(*cp));
+    cp->handle = sys_cpu_to_le16(handle);
+    cp->handle_type = handle_type;
 
-	err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_READ_TX_POWER_LEVEL,
-				   buf, &rsp);
-	if (err) {
-		printk("Read Tx power err: %d\n", err);
-		return;
-	}
+    err = bt_hci_cmd_send_sync(BT_HCI_OP_VS_READ_TX_POWER_LEVEL,
+                               buf, &rsp);
+    if (err)
+    {
+        printk("Read Tx power err: %d\n", err);
+        return;
+    }
 
-	rp = (void *)rsp->data;
-	*tx_pwr_lvl = rp->tx_power_level;
+    rp = (void *)rsp->data;
+    *tx_pwr_lvl = rp->tx_power_level;
 
-	net_buf_unref(rsp);
+    net_buf_unref(rsp);
 }
-
-
 
 // static uint8_t txPower = 8;
 uint8_t adv_packet_no = 0;
@@ -128,13 +134,31 @@ void get_public_mac_address(void)
     net_buf_unref(rsp);
 }
 
+static void bt_ready(int err)
+{
+    if (err)
+    {
+        printk("Bluetooth init failed (err %d)\n", err);
+        return;
+    }
+
+    printk("Bluetooth initialized\n");
+
+    err = start_advertise();
+
+    if (err)
+    {
+        printk("bluetooth advertise failed\n");
+    }
+}
+
 int start_advertise(void)
 {
     int err = 0;
     uint8_t tx_power = 0;
     // set_tx_power(4);
-    //tx_power = get_tx_power();
-  //  set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, 8);
+    // tx_power = get_tx_power();
+    //  set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, 8);
     sensor_data[sizeof(sensor_data) - 1] = tx_power;
     sensor_data[sizeof(sensor_data) - 2] = adv_packet_no;
     if (adv_packet_no < MAX_ADVERTISE_PACKET)
@@ -163,30 +187,33 @@ int start_advertise(void)
 int stop_advertise(void)
 {
     int err = 0;
-//  err = bt_le_adv_stop();
+    //  err = bt_le_adv_stop();
     return err;
 }
 
 int radio_init(void)
 {
     int err;
-    int8_t txp_get=0;
+    int8_t txp_get = 0;
     printk("Initialize radio \n");
-    err = bt_enable(start_advertise);
+    err = bt_enable(bt_ready);
+#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
 
-	printk("Get Tx power level ->");
-	get_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, &txp_get);
-	printk("-> default TXP = %d\n", txp_get);
+#endif
 
-    k_sleep(K_SECONDS(5));
+    printk("Get Tx power level ->");
+    get_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, &txp_get);
+    printk("-> default TXP = %d\n", txp_get);
+
+    k_sleep(K_SECONDS(1));
 
     printk("Set Tx power level to %d\n", ADV_TX_POWER);
-	set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV,0, (int8_t)ADV_TX_POWER);
-	k_sleep(K_SECONDS(5));
+    set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, (int8_t)ADV_TX_POWER);
+    k_sleep(K_SECONDS(5));
     printk("Get Tx power level -> ");
-	get_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV,0, &txp_get);
-	printk("TXP = %d\n", txp_get);
-    
+    get_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, &txp_get);
+    printk("TXP = %d\n", txp_get);
+
     if (err)
     {
         printk("Bluetooth init failed (err %d)\n", err);

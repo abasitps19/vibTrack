@@ -1,0 +1,6 @@
+#ifndef _DERIVERS_LSM6DSOX_H
+#define _DERIVERS_LSM6DSOX_H
+
+
+
+#endif //_DERIVERS_LSM6DSOX_H
