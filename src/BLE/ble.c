@@ -77,7 +77,6 @@ static void get_tx_power(uint8_t handle_type, uint16_t handle, int8_t *tx_pwr_lv
     net_buf_unref(rsp);
 }
 
-// static uint8_t txPower = 8;
 uint8_t adv_packet_no = 0;
 uint8_t sensor_data[] = {
     0x4C, 0x00, // 0x59 00 nordic, 0x4c 00 apple
@@ -99,17 +98,6 @@ static const struct bt_data sd[] = {
 };
 */
 
-/*void set_tx_power(int8_t tx_power)
-{
-    NRF_RADIO->TXPOWER = (tx_power << RADIO_TXPOWER_TXPOWER_Pos) & RADIO_TXPOWER_TXPOWER_Msk;
-}
-*/
-
-/*int8_t get_tx_power(void)
-{
-    return (NRF_RADIO->TXPOWER & RADIO_TXPOWER_TXPOWER_Msk) >> RADIO_TXPOWER_TXPOWER_Pos;
-}
-*/
 void get_public_mac_address(void)
 {
     struct net_buf *rsp;
@@ -171,7 +159,6 @@ int start_advertise(void)
     }
 
     err = bt_le_adv_start(BT_LE_ADV_CONN, sensor, ARRAY_SIZE(sensor), NULL, 0);
-
     // err = bt_le_adv_start(BT_LE_ADV_NCONN /*BT_LE_ADV_CONN*/, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
     if (err)
@@ -197,9 +184,6 @@ int radio_init(void)
     int8_t txp_get = 0;
     printk("Initialize radio \n");
     err = bt_enable(bt_ready);
-#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
-
-#endif
 
     printk("Get Tx power level ->");
     get_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, &txp_get);

@@ -23,7 +23,7 @@
 // #define HRS_QUEUE_SIZE 16
 
 #define ADVERTISE_DELAY_TIME 2
-#define ADVERTISE_DURATION 1000
+#define ADVERTISE_DURATION 500
 
 #define STATUS1_BUTTON DK_BTN1_MSK
 #define STATUS2_BUTTON DK_BTN2_MSK
@@ -43,7 +43,7 @@ K_TIMER_DEFINE(timer_100ms, cb_timer_app_100ms, cb_timer_app_100ms_stop);
 uint8_t led_status = 0;
 
 const struct device *gpio_dev;
-#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_ENABLE_BT_TX_POWER_STRONGEST
 int int_power_amplifire(uint8_t status)
 {
     int err = 0;
@@ -114,11 +114,10 @@ int system_init(void)
 {
     int err;
     err = board_init();
-#ifdef CONFIG_BT_LBS_SECURITY_ENABLED
+#ifdef CONFIG_ENABLE_BT_TX_POWER_STRONGEST
     int_power_amplifire(ENABLE);
 #endif
     err = radio_init();
-    // int_power_amplifire(ENABLE);
     return err;
 }
 
@@ -147,15 +146,15 @@ void handle_advertise()
 {
     if (advertise_state == 1)
     {
-        // start_advertise();
-        // printk("start advertising \n");
+        start_advertise();
+        printk("start advertising \n");
         dk_set_led(RUN_STATUS_LED, 0);
         advertise_state = 3;
     }
     else if (advertise_state == 2)
     {
-        // stop_advertise();
-        // printk("stop advertising \n");
+        stop_advertise();
+        printk("stop advertising \n");
         dk_set_led(RUN_STATUS_LED, 1);
         advertise_state = 3;
     }

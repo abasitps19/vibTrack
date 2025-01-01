@@ -3,6 +3,11 @@
 
 #include "..\..\inc\nrfconfig.h"
 
+#define ADV_TX_POWER (int8_t) 4 // dBm
+
+// #define CONFIG_ENABLE_BT_TX_POWER_STRONGEST 1
+//  #undef CONFIG_ENABLE_BT_TX_POWER_STRONGEST
+
 #define ENABLE 1
 #define DISABLE 0
 
@@ -16,13 +21,5 @@
 #define STATUS_LED STATUS_LED_BT832X
 
 #define GPIO_PORT DT_NODELABEL(gpio0) // Use GPIO0 (check your devicetree)
-
-#define ADV_TX_POWER (int8_t)4
-#define DEVICE_BEACON_TXPOWER_NUM 8
-
-static const int8_t txpower[DEVICE_BEACON_TXPOWER_NUM] = {4, 0, -3, -8, -15, -18, -23, -30};
-
-// #define CONFIG_BT_LBS_SECURITY_ENABLED
-#undef CONFIG_BT_LBS_SECURITY_ENABLED
 
 #endif //_APP_CONFIGURATION_H
