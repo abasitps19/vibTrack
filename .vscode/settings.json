@@ -2,6 +2,7 @@
     "files.associations": {
         "systeminit.h": "c",
         "nrfconfig.h": "c",
-        "configurations.h": "c"
+        "configurations.h": "c",
+        "ble.h": "c"
     }
 }

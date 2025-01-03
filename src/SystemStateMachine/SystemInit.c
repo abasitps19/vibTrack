@@ -4,14 +4,11 @@
   p0.06 -> cps
 
 */
-// #include "../inc/app_config.h"
-// #include "../inc/ble.h"
-// #include "../inc/vibsens.h"
 
 #include "../../inc/Configurations/Configurations.h"
-
-#include "../../inc/BLE/ble.h"
 #include "../../inc/SystemStateMachine/SystemInit.h"
+#include "../../inc/BLE/ble.h"
+
 #define RUN_STATUS_LED DK_LED1
 #define STATUS_LED1 DK_LED2
 #define STATUS_LED2 DK_LED3
@@ -22,7 +19,7 @@
 
 // #define HRS_QUEUE_SIZE 16
 
-#define ADVERTISE_DELAY_TIME 2
+#define ADVERTISE_DELAY_TIME 1
 #define ADVERTISE_DURATION 500
 
 #define STATUS1_BUTTON DK_BTN1_MSK
@@ -30,20 +27,20 @@
 
 // GPIO defination
 static bool app_button_state;
+uint8_t radio_state = BLE_RADIO_STATE_DEFAULT;
+uint8_t led_status = 0;
 
 int board_init(void);
 
-void cb_timer_app_1sec(struct k_timer *timer_id);
-void cb_timer_app_100ms(struct k_timer *timer_id);
-void cb_timer_app_100ms_stop(struct k_timer *timer_id);
+void cb_timer_app_sec(struct k_timer *timer_id);
+void cb_timer_app_ms(struct k_timer *timer_id);
+void cb_timer_app_ms_stop(struct k_timer *timer_id);
 
-K_TIMER_DEFINE(timer_1sec, cb_timer_app_1sec, NULL);
-K_TIMER_DEFINE(timer_100ms, cb_timer_app_100ms, cb_timer_app_100ms_stop);
+K_TIMER_DEFINE(timer_sec, cb_timer_app_sec, NULL);
+K_TIMER_DEFINE(timer_ms, cb_timer_app_ms, cb_timer_app_ms_stop);
 
-uint8_t led_status = 0;
-
-const struct device *gpio_dev;
 #ifdef CONFIG_ENABLE_BT_TX_POWER_STRONGEST
+const struct device *gpio_dev;
 int int_power_amplifire(uint8_t status)
 {
     int err = 0;
@@ -131,15 +128,16 @@ int board_init(void)
         printk("LEDs init failed (err %d)\n", err);
         return 0;
     }
-    err = init_button();
-    if (err)
-    {
-        printk("Button init failed (err %d)\n", err);
-    }
-
+    /*  err = init_button();
+      if (err)
+      {
+          printk("Button init failed (err %d)\n", err);
+      }
+  */
     return err;
 }
 
+/*
 static uint8_t advertise_state = 0;
 
 void handle_advertise()
@@ -162,28 +160,25 @@ void handle_advertise()
     {
     }
 };
+*/
 
-void cb_timer_app_1sec(struct k_timer *timer_id)
+void cb_timer_app_sec(struct k_timer *timer_id)
 {
-
-    advertise_state = 1;
-    k_timer_start(&timer_100ms, K_MSEC(ADVERTISE_DURATION), K_NO_WAIT);
-    // start advertise
+    radio_state = BLE_RADIO_STATE_START_ADVERTISE;
+    k_timer_start(&timer_ms, K_MSEC(ADVERTISE_DURATION), K_NO_WAIT);
 }
 
-void cb_timer_app_100ms(struct k_timer *timer_id)
+void cb_timer_app_ms(struct k_timer *timer_id)
 {
-    // turn off led
-    // stop_advertise();
-    advertise_state = 2;
+    radio_state = BLE_RADIO_STATE_STOP_ADVERTISE;
 }
-void cb_timer_app_100ms_stop(struct k_timer *timer_id)
+void cb_timer_app_ms_stop(struct k_timer *timer_id)
 {
 }
 
 void init_timers(void)
 {
-    k_timer_start(&timer_1sec, K_SECONDS(ADVERTISE_DELAY_TIME), K_SECONDS(ADVERTISE_DELAY_TIME));
+    k_timer_start(&timer_sec, K_SECONDS(ADVERTISE_DELAY_TIME * 2), K_SECONDS(ADVERTISE_DELAY_TIME * 2));
 }
 
 void blink_led(void)
@@ -193,8 +188,46 @@ void blink_led(void)
     // dk_set_led(STATUS_LED1, 0);
     // dk_set_led(STATUS_LED2, 1);
     // k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
-    //   gpio_pin_set(gpio_dev, PIN_NUMBER, 1); // Set pin high
-    //    k_msleep(500);                         // Delay
-    //    gpio_pin_set(gpio_dev, PIN_NUMBER, 0); // Set pin low
-    //    k_msleep(500);                         // Delay
+    // gpio_pin_set(gpio_dev, PIN_NUMBER, 1); // Set pin high
+    // k_msleep(500);                         // Delay
+    // gpio_pin_set(gpio_dev, PIN_NUMBER, 0); // Set pin low
+    // k_msleep(500);                         // Delay
+}
+
+void process_radio_states(void)
+{
+    switch (radio_state)
+    {
+    case BLE_RADIO_STATE_DEFAULT:
+        break;
+    case BLE_RADIO_STATE_START_ADVERTISE:
+        start_advertise();
+        printk("start advertising \n");
+        dk_set_led(RUN_STATUS_LED, 0);
+        radio_state = BLE_RADIO_STATE_DEFAULT;
+        break;
+    case BLE_RADIO_STATE_START_ADVERTISE_CONTINUOUS:
+        if (get_advertise_status() == BLE_NOT_ADVERTISING)
+        {
+            start_advertise();
+            printk("advertising contious mode\n");
+        }
+        else
+        {
+            // printk("advertising already started\n");
+        }
+        break;
+    case BLE_RADIO_STATE_STOP_ADVERTISE:
+        stop_advertise();
+        printk("stop advertising \n");
+        dk_set_led(RUN_STATUS_LED, 1);
+        radio_state = BLE_RADIO_STATE_DEFAULT;
+        break;
+    case BLE_RADIO_STATE_START_SCAN:
+        break;
+    case BLE_RADIO_STATE_STOP_SCAN:
+        break;
+    default:
+        break;
+    }
 }

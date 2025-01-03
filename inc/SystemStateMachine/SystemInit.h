@@ -4,8 +4,11 @@
 void blink_led();
 void init_timers(void);
 int system_init(void);
-void handle_advertise();
-int start_advertise(void);
-int stop_advertise(void);
+//void handle_advertise();
+
+// int start_advertise(void);
+// int stop_advertise(void);
+
+void process_radio_states(void);
 
 #endif //_SYSTEM_INIT_H
