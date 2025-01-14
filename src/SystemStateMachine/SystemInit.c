@@ -19,14 +19,14 @@
 
 // #define HRS_QUEUE_SIZE 16
 
-#define ADVERTISE_DELAY_TIME 1
-#define ADVERTISE_DURATION 500
+#define ADVERTISE_DELAY_TIME 2
+#define ADVERTISE_DURATION 200
 
 #define STATUS1_BUTTON DK_BTN1_MSK
 #define STATUS2_BUTTON DK_BTN2_MSK
 
 // GPIO defination
-static bool app_button_state;
+// static bool app_button_state;
 uint8_t radio_state = BLE_RADIO_STATE_DEFAULT;
 uint8_t led_status = 0;
 
@@ -74,7 +74,7 @@ int int_power_amplifire(uint8_t status)
     return err;
 }
 #endif
-
+/*
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
     if (has_changed & USER_BUTTON)
@@ -93,7 +93,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
         }
     }
 }
-
+*/
+/*
 static int init_button(void)
 {
     int err;
@@ -106,7 +107,7 @@ static int init_button(void)
 
     return err;
 }
-
+*/
 int system_init(void)
 {
     int err;
@@ -203,7 +204,7 @@ void process_radio_states(void)
     case BLE_RADIO_STATE_START_ADVERTISE:
         start_advertise();
         printk("start advertising \n");
-        dk_set_led(RUN_STATUS_LED, 0);
+        dk_set_led(RUN_STATUS_LED, 1);
         radio_state = BLE_RADIO_STATE_DEFAULT;
         break;
     case BLE_RADIO_STATE_START_ADVERTISE_CONTINUOUS:
@@ -220,7 +221,7 @@ void process_radio_states(void)
     case BLE_RADIO_STATE_STOP_ADVERTISE:
         stop_advertise();
         printk("stop advertising \n");
-        dk_set_led(RUN_STATUS_LED, 1);
+        dk_set_led(RUN_STATUS_LED, 0);
         radio_state = BLE_RADIO_STATE_DEFAULT;
         break;
     case BLE_RADIO_STATE_START_SCAN:

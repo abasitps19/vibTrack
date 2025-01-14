@@ -3,10 +3,13 @@
 
 #include "..\..\inc\nrfconfig.h"
 
-#define ADV_TX_POWER (int8_t)4 // dBm
+#define ADV_TX_POWER (int8_t)8 // dBm
 
-//#define CONFIG_ENABLE_BT_TX_POWER_STRONGEST 1
-//  #undef CONFIG_ENABLE_BT_TX_POWER_STRONGEST
+// #define CONFIG_ENABLE_BT_TX_POWER_STRONGEST 1
+//    #undef CONFIG_ENABLE_BT_TX_POWER_STRONGEST
+
+#define CONFIG_ENABLE_LE_CODED 1
+// #undef CONFIG_ENABLE_LE_CODED
 
 #define ENABLE 1
 #define DISABLE 0
@@ -14,6 +17,7 @@
 #define CTX_PIN 17
 #define CRX_PIN 19
 #define CPS_PIN 6
+
 #define GPIO_PORT DT_NODELABEL(gpio0) // Use GPIO0 (check your devicetree)
 #endif
 

@@ -12,6 +12,8 @@ uint8_t ble_advertise_status = BLE_NOT_ADVERTISING;
 
 #define BT_LE_ADV_CONNECT BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_ADVERTISE_INTERVAL_MIN, BT_ADVERTISE_INTERVAL_MAX, NULL)
 
+#define BT_LE_ADV_CONNECT_LE_CODED BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_CODED, BT_ADVERTISE_INTERVAL_MIN, BT_ADVERTISE_INTERVAL_MAX, NULL)
+
 static void set_tx_power(uint8_t handle_type, uint16_t handle, int8_t tx_pwr_lvl)
 {
     struct bt_hci_cp_vs_write_tx_power_level *cp;
@@ -140,11 +142,11 @@ uint8_t get_advertise_status(void)
 int start_advertise(void)
 {
     int err = 0;
-    uint8_t tx_power = 0;
+    //uint8_t tx_power = 0;
     // set_tx_power(4);
     // tx_power = get_tx_power();
     //  set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, 8);
-    sensor_data[sizeof(sensor_data) - 1] = tx_power;
+    sensor_data[sizeof(sensor_data) - 1] = ADV_TX_POWER;
     sensor_data[sizeof(sensor_data) - 2] = adv_packet_no;
     if (adv_packet_no < MAX_ADVERTISE_PACKET)
     {
@@ -154,8 +156,13 @@ int start_advertise(void)
     {
         adv_packet_no = 1;
     }
-
+ #ifdef CONFIG_ENABLE_LE_CODED
+    err = bt_le_adv_start(BT_LE_ADV_CONNECT_LE_CODED, sensor, ARRAY_SIZE(sensor), NULL, 0);
+#else
     err = bt_le_adv_start(BT_LE_ADV_CONNECT, sensor, ARRAY_SIZE(sensor), NULL, 0);
+#endif  
+    
+ 
     // err = bt_le_adv_start(BT_LE_ADV_NCONN /*BT_LE_ADV_CONN*/, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
     if (err)
