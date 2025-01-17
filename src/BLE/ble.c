@@ -2,17 +2,21 @@
 #include "../../inc/Configurations/Configurations.h"
 #include "../../inc/BLE/ble.h"
 
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
+
 #define MAX_ADVERTISE_PACKET 250
+#define BT_ADVERTISE_INTERVAL_MIN 0x20
+#define BT_ADVERTISE_INTERVAL_MAX 0x40
+
+#define BT_LE_ADV_CONNECT BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_USE_TX_POWER, BT_ADVERTISE_INTERVAL_MIN, BT_ADVERTISE_INTERVAL_MAX, NULL)
+
+// #define BT_LE_ADV_CONNECT_LE_CODED BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_CODED, BT_ADVERTISE_INTERVAL_MIN, BT_ADVERTISE_INTERVAL_MAX, NULL)
 
 uint8_t adv_packet_no = 0;
 uint8_t ble_advertise_status = BLE_NOT_ADVERTISING;
 
-#define BT_ADVERTISE_INTERVAL_MIN 0x20
-#define BT_ADVERTISE_INTERVAL_MAX 0x40
-
-#define BT_LE_ADV_CONNECT BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, BT_ADVERTISE_INTERVAL_MIN, BT_ADVERTISE_INTERVAL_MAX, NULL)
-
-#define BT_LE_ADV_CONNECT_LE_CODED BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_CODED, BT_ADVERTISE_INTERVAL_MIN, BT_ADVERTISE_INTERVAL_MAX, NULL)
+static struct bt_le_ext_adv *adv;
 
 static void set_tx_power(uint8_t handle_type, uint16_t handle, int8_t tx_pwr_lvl)
 {
@@ -91,14 +95,21 @@ static const struct bt_data sensor[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR | BT_LE_AD_GENERAL),
     BT_DATA(BT_DATA_MANUFACTURER_DATA, sensor_data, sizeof(sensor_data)),
 };
+#ifdef CONFIG_ENABLE_LE_CODED
+static const struct bt_data ad[] = {
+    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_HRS_VAL),
+                  BT_UUID_16_ENCODE(BT_UUID_BAS_VAL),
+                  BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
+    BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN)};
+
+#endif
 
 void get_public_mac_address(void)
 {
     struct net_buf *rsp;
     struct bt_hci_rp_read_bd_addr *rp;
     int err;
-
-    // Send HCI command to read the BD_ADDR (public address)
 
     err = bt_hci_cmd_send_sync(BT_HCI_OP_READ_BD_ADDR, NULL, &rsp);
     if (err)
@@ -123,10 +134,7 @@ static void bt_ready(int err)
         printk("Bluetooth init failed (err %d)\n", err);
         return;
     }
-
     printk("Bluetooth initialized\n");
-
-    // err = start_advertise();
 
     if (err)
     {
@@ -139,13 +147,43 @@ uint8_t get_advertise_status(void)
     return ble_advertise_status;
 }
 
+static int create_advertising(void)
+{
+    int err;
+#ifdef CONFIG_ENABLE_LE_CODED
+    struct bt_le_adv_param param =
+        BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONNECTABLE |
+                                 BT_LE_ADV_OPT_EXT_ADV |
+                                 BT_LE_ADV_OPT_USE_TX_POWER |
+                                 BT_LE_ADV_OPT_CODED,
+                             BT_GAP_ADV_FAST_INT_MIN_2,
+                             BT_GAP_ADV_FAST_INT_MAX_2,
+                             NULL);
+
+    err = bt_le_ext_adv_create(&param, NULL, &adv);
+    if (err)
+    {
+        printk("Failed to create advertiser set (err %d)\n", err);
+        return err;
+    }
+
+    printk("Created adv: %p\n", adv);
+
+    err = bt_le_ext_adv_set_data(adv, ad, ARRAY_SIZE(ad), NULL, 0);
+    if (err)
+    {
+        printk("Failed to set advertising data (err %d)\n", err);
+        return err;
+    }
+#else
+    // do nothing
+#endif
+    return 0;
+}
+
 int start_advertise(void)
 {
     int err = 0;
-    //uint8_t tx_power = 0;
-    // set_tx_power(4);
-    // tx_power = get_tx_power();
-    //  set_tx_power(BT_HCI_VS_LL_HANDLE_TYPE_ADV, 0, 8);
     sensor_data[sizeof(sensor_data) - 1] = ADV_TX_POWER;
     sensor_data[sizeof(sensor_data) - 2] = adv_packet_no;
     if (adv_packet_no < MAX_ADVERTISE_PACKET)
@@ -156,15 +194,18 @@ int start_advertise(void)
     {
         adv_packet_no = 1;
     }
- #ifdef CONFIG_ENABLE_LE_CODED
-    err = bt_le_adv_start(BT_LE_ADV_CONNECT_LE_CODED, sensor, ARRAY_SIZE(sensor), NULL, 0);
+#ifdef CONFIG_ENABLE_LE_CODED
+    err = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
+    if (err)
+    {
+        printk("Failed to start extended advertising set (err %d)\n", err);
+        return;
+    }
+    // err = bt_le_adv_start(BT_LE_ADV_CONNECT_LE_CODED, sensor, ARRAY_SIZE(sensor), NULL, 0);
 #else
     err = bt_le_adv_start(BT_LE_ADV_CONNECT, sensor, ARRAY_SIZE(sensor), NULL, 0);
-#endif  
-    
- 
+#endif
     // err = bt_le_adv_start(BT_LE_ADV_NCONN /*BT_LE_ADV_CONN*/, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
-
     if (err)
     {
         printk("Advertising failed to start (err %d)\n", err);
@@ -179,7 +220,15 @@ int start_advertise(void)
 int stop_advertise(void)
 {
     int err = 0;
+#ifdef CONFIG_ENABLE_LE_CODED
+    err = bt_le_ext_adv_stop(adv);
+#else
     err = bt_le_adv_stop();
+#endif
+    if (err)
+    {
+        printk("Advertising failed to stop (err %d)\n", err);
+    }
     ble_advertise_status = BLE_NOT_ADVERTISING;
     return err;
 }
@@ -211,8 +260,10 @@ int radio_init(void)
         printk("Bluetooth init failed (err %d)\n", err);
         return 0;
     }
-    bt_set_tx_power(ADV_TX_POWER);
 
+    // bt_set_tx_power(ADV_TX_POWER);
+
+    create_advertising();
     printk("Bluetooth initialized\n");
 
     if (IS_ENABLED(CONFIG_SETTINGS))

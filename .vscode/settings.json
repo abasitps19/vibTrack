@@ -3,6 +3,7 @@
         "systeminit.h": "c",
         "nrfconfig.h": "c",
         "configurations.h": "c",
-        "ble.h": "c"
+        "ble.h": "c",
+        "types.h": "c"
     }
 }
